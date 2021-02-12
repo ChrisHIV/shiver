@@ -61,7 +61,7 @@ HIVcontigNames=$(awk '/^>/ {print substr($1,2)}' "$RawContigFile1")
 
 # Run the contig cutting & flipping code. Check it works, and quit if it thinks
 # the contigs need correcting.
-"$Code_CorrectContigs" "$BlastFile" --min-hit-frac "$MinContigHitFrac" || \
+$Python "$Code_CorrectContigs" "$BlastFile" --min-hit-frac "$MinContigHitFrac" || \
 { echo "The contigs in $ContigFile appear to need correcting (or a problem" \
 "was encountered running $Code_CorrectContigs; check any error messages" \
 "above). Fully automatic processing not possible. Quitting." >&2 ; exit 1 ; }
@@ -93,7 +93,7 @@ for ref in "$InitDir"/'IndividualRefs'/*'.fasta'; do
     echo "Error: unexpected whitespace in file $AlnFile1. Quitting." >&2
     exit 1
   fi
-  RefSimilarityScore1=$("$Code_ConstructRef" "$AlnFile1" 'DummyOut' \
+  RefSimilarityScore1=$($Python "$Code_ConstructRef" "$AlnFile1" 'DummyOut' \
   $HIVcontigNames --print-best-score | awk '{print $1}')
   echo $RefSimilarityScore1 "$AlnFile1" >> "$RefMatchLog"
 
@@ -110,7 +110,7 @@ for ref in "$InitDir"/'IndividualRefs'/*'.fasta'; do
   OldMafft=true
   rm "$AlnFile2"
   continue ; }
-  RefSimilarityScore2=$("$Code_ConstructRef" "$AlnFile2" 'DummyOut' \
+  RefSimilarityScore2=$($Python "$Code_ConstructRef" "$AlnFile2" 'DummyOut' \
   $HIVcontigNames --print-best-score | awk '{print $1}')
   echo $RefSimilarityScore2 "$AlnFile2" >> "$RefMatchLog"
 
@@ -123,7 +123,7 @@ mv "$BestRefFile" "$BestContigToRefAlignment"
 
 # Check that the gappiest contig is not too gappy in the best contig-to-ref
 # alignment.
-LargestGapFrac=$("$Code_ConstructRef" "$BestContigToRefAlignment" 'DummyOut' \
+LargestGapFrac=$($Python "$Code_ConstructRef" "$BestContigToRefAlignment" 'DummyOut' \
 $HIVcontigNames --summarise-contigs-1 | sort -nrk2,2 | head -1 | awk '{print $2}')
 if (( $(echo "$LargestGapFrac > $MaxContigGappiness" | bc -l) )); then
   echo "The gappiest contig in the best contig-to-reference alignment," \
@@ -145,7 +145,7 @@ fi
 #fi
 
 # Construct the tailored ref
-"$Code_ConstructRef" "$BestContigToRefAlignment" "$GappyRefWithExtraSeq" \
+$Python "$Code_ConstructRef" "$BestContigToRefAlignment" "$GappyRefWithExtraSeq" \
 $HIVcontigNames ||
 { echo 'Failed to construct a ref from the alignment. Quitting.' >&2; exit 1 ; }
 
@@ -153,7 +153,7 @@ $HIVcontigNames ||
 awk '/^>/{if(N)exit;++N;} {print;}' "$GappyRefWithExtraSeq" > "$RefWithGaps"
 
 # Remove any gaps from the reference
-"$Code_UngapFasta" "$RefWithGaps" > "$TheRef" || \
+$Python "$Code_UngapFasta" "$RefWithGaps" > "$TheRef" || \
 { echo 'Gap stripping code failed. Quitting.' >&2 ; exit 1 ; }
 
 # Map!
