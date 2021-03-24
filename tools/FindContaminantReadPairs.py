@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 from __future__ import print_function
 #
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk

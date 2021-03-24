@@ -92,7 +92,7 @@ PrintAlnLengthIncrease "$RefAlignment" "$RawContigAlignment" || \
 "contigs to the existing references. Quitting." >&2 ; exit 1 ; }
 
 # Run the contig cutting & flipping code
-"$Code_CorrectContigs" "$BlastFile" "$ContigMinBlastOverlapToMerge" \
+$Python "$Code_CorrectContigs" "$BlastFile" "$ContigMinBlastOverlapToMerge" \
 -C "$ContigFile" -O "$CutContigFile" -B "$MergedBlastFile" || \
 { echo "Problem encountered running $Code_CorrectContigs. Quitting." >&2 ; \
 exit 1; }
@@ -117,7 +117,7 @@ if [[ -f "$CutContigFile" ]]; then
 
   # Split gappy contigs after alignment.
   CutContigNames=$(awk '/^>/ {print substr($1,2)}' "$CutContigFile")
-  "$Code_CutAlignedContigs" "$TempContigAlignment3" $CutContigNames \
+  $Python "$Code_CutAlignedContigs" "$TempContigAlignment3" $CutContigNames \
   $CutAlignedContigsArgs > "$CutContigAlignment"
   CutAlignedContigsStatus=$?
   if [[ $CutAlignedContigsStatus == 3 ]]; then
@@ -138,7 +138,7 @@ else
   # want to split the aligned raw contigs. If so, name it the same as aligned
   # cut contigs for consistency.
   RawContigNames=$(awk '/^>/ {print substr($1,2)}' "$RawContigFile1")
-  "$Code_CutAlignedContigs" "$RawContigAlignment" $RawContigNames \
+  $Python "$Code_CutAlignedContigs" "$RawContigAlignment" $RawContigNames \
   $CutAlignedContigsArgs > "$CutContigAlignment"
   CutAlignedContigsStatus=$?
   if [[ $CutAlignedContigsStatus == 3 ]]; then
@@ -150,7 +150,7 @@ else
     exit 1
   fi
 
-  equal=$("$Code_CheckFastaFileEquality" "$RawContigAlignment" \
+  equal=$($Python "$Code_CheckFastaFileEquality" "$RawContigAlignment" \
   "$CutContigAlignment") || { echo "Problem running"\
   "$Code_CheckFastaFileEquality. Quitting." >&2 ; exit 1 ; }
   if [[ "$equal" == "true" ]]; then
