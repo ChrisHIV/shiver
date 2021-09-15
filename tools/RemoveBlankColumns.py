@@ -1,5 +1,11 @@
-#!/usr/bin/env python2
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+
+from Bio import AlignIO
+from ShiverFuncs import RemoveBlankColumns
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -9,11 +15,6 @@ ExplanatoryMessage = '''This script removes those columns/positions in alignment
 that are wholly 'blank', i.e. consist solely of the gap character "-". Output is
 printed to stdout.'''
 
-import argparse
-import os
-import sys
-from Bio import AlignIO
-from ShiverFuncs import RemoveBlankColumns
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

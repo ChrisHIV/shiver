@@ -1,5 +1,17 @@
-#!/usr/bin/env python
+from __future__ import division
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from past.utils import old_div
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -19,21 +31,6 @@ YaxisLabel='mean read identity'
 colour = 'blue'
 ################################################################################
 
-import matplotlib
-matplotlib.use('Agg')
-
-import matplotlib.pyplot as plt
-import argparse
-import os
-import collections
-import sys
-import numpy as np
-try:
-  import pandas as pd
-except ImportError:
-  print("This script requires your python installation to have the pandas",
-  "module installed. Search for 'python pandas installation' or similar.")
-  raise
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -153,10 +150,10 @@ if args.csv_for_replotting == None:
   y = np.empty(len(CoverageCounts))
   NumbersOfPositionsExceedingCoverages = np.empty(len(CoverageCounts))
   RunningTotalNumberOfPositions = 0
-  for i, (coverage, count) in enumerate(sorted(CoverageCounts.items(),
+  for i, (coverage, count) in enumerate(sorted(list(CoverageCounts.items()),
   key = lambda x : x[0], reverse = True)):
     x[i] = coverage
-    y[i] = ScaledTotalIdentitiesByCoverage[coverage] / count
+    y[i] = old_div(ScaledTotalIdentitiesByCoverage[coverage], count)
     RunningTotalNumberOfPositions += count
     NumbersOfPositionsExceedingCoverages[i] = RunningTotalNumberOfPositions
 

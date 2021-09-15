@@ -1,5 +1,13 @@
-#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+from builtins import str
+
+import pysam
+from Bio import SeqIO
+from ShiverFuncs import CalculateReadIdentity
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -10,12 +18,6 @@ fraction of bases which are mapped and agree with the reference) below a
 specified value from a bam file.
 '''
 
-import os
-import sys
-import argparse
-import pysam
-from Bio import SeqIO
-from ShiverFuncs import CalculateReadIdentity
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

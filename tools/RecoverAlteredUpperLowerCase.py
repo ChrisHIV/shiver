@@ -1,5 +1,14 @@
-#!/usr/bin/env python
+from __future__ import division
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+from builtins import range
+from builtins import str
+
+from Bio import SeqIO, Seq
+from past.utils import old_div
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -16,12 +25,6 @@ problem: manual editing of shiver consensuses using Geneious (where changing gap
 placement also changed the number of "?" characters required at the ends) caused
 loss of the meaningful upper/lower case distinction.'''
 
-import argparse
-import os
-import sys
-from Bio import SeqIO
-from Bio import Seq
-import collections
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -43,7 +46,7 @@ seqs_before = list(SeqIO.parse(open(args.seqs_before), 'fasta'))
 seqs_after  = list(SeqIO.parse(open(args.seqs_after),  'fasta'))
 
 # Function to turn 1 into 1st, 2 into 2nd, etc.
-ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
+ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(old_div(n,10)%10!=1)*(n%10<4)*n%10::4])
 
 # Check same number of seqs
 assert len(seqs_after) == len(seqs_before), \

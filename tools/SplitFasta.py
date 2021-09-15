@@ -1,5 +1,10 @@
-#!/usr/bin/env python2
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+
+from Bio import SeqIO
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -9,10 +14,6 @@ ExplanatoryMessage = '''This script splits a fasta file up, printing each
 sequence into a different file, named according to the sequence name (removing
 any characters that are problematic for file names).'''
 
-import argparse
-import os
-import sys
-from Bio import SeqIO
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -78,5 +79,5 @@ if SeqDict == {}:
   exit(1)
 
 # Write the files.
-for FilenameSafeID, seq in SeqDict.items():
+for FilenameSafeID, seq in list(SeqDict.items()):
   SeqIO.write(seq, FilenameFromSeqID(FilenameSafeID), "fasta")

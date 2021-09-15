@@ -1,5 +1,10 @@
 from __future__ import print_function
 
+import collections
+import os
+import sys
+from builtins import str, range
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -8,7 +13,6 @@ from __future__ import print_function
 ## into a dictionary, and for checking if two bases match while allowing for one
 ## or both to be ambiguous.
 
-import os, sys, collections
 
 # A dictionary of what the IUPAC ambiguous letters mean
 IUPACdict = {}
@@ -33,7 +37,7 @@ acgt = ['A','C','G','T']
 ReverseIUPACdict = {}
 for UnambigLetter in acgt:
   ReverseIUPACdict[UnambigLetter] = [UnambigLetter]
-  for AmbigLetter,TargetLetters in IUPACdict.items():
+  for AmbigLetter,TargetLetters in list(IUPACdict.items()):
     if UnambigLetter in TargetLetters:
       ReverseIUPACdict[UnambigLetter].append(AmbigLetter)
 
@@ -60,13 +64,13 @@ def InterpretIUPAC(MyDict):
   for an ambiguity code key is divided equally between the letters involved in
   the ambiguity code.'''
 
-  keys = MyDict.keys()
+  keys = list(MyDict.keys())
   UpdatedDict = {}
   for UnambigLetter in acgt:
     if UnambigLetter in keys:
       UpdatedDict[UnambigLetter] = MyDict[UnambigLetter]
 
-  for AmbigLetter,TargetLetters in IUPACdict.items():
+  for AmbigLetter,TargetLetters in list(IUPACdict.items()):
     if AmbigLetter in keys:
       WeightPerTargetLetter = float(MyDict[AmbigLetter])/len(TargetLetters)
       for TargetLetter in TargetLetters:
@@ -115,7 +119,7 @@ def CallAmbigBaseIfNeeded(bases, coverage, MinCovForUpper, BaseFreqFile):
       except KeyError:
         print('Unexpected set of bases', bases, 'found in', BaseFreqFile, \
         ', not found amonst those for which we have ambiguity codes, namely:', \
-        ' '.join(ReverseIUPACdict2.keys()) + '. Quitting.', file=sys.stderr)
+        ' '.join(list(ReverseIUPACdict2.keys())) + '. Quitting.', file=sys.stderr)
         raise
   if coverage < MinCovForUpper - 0.5:
     return BaseHere.lower()
@@ -213,10 +217,10 @@ def ReadSequencesFromFile(DataFile,IsAlignment=True):
 
 
   # Check all sequences have the same length, if they're supposed to
-  FirstSequenceName, FirstSequence = AllSequences.items()[0]
+  FirstSequenceName, FirstSequence = list(AllSequences.items())[0]
   SequenceLength = len(FirstSequence)
   if IsAlignment:
-    for SequenceName, Sequence in AllSequences.items():
+    for SequenceName, Sequence in list(AllSequences.items()):
       if len(Sequence) != SequenceLength:
         print(SequenceName, 'has length', len(Sequence), 'whereas', \
         FirstSequenceName, 'has length', str(SequenceLength)+\

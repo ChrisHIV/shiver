@@ -1,5 +1,15 @@
-#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import copy
+import os
+import subprocess
+import sys
+from builtins import str, zip
+
+from AuxiliaryFunctions import PropagateNoCoverageChar
+from Bio import Seq
+from Bio import SeqIO
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -15,17 +25,6 @@ How it works: we replace missing coverage by gaps, realign, match the consensus
 fragments after (which in general contain new gaps) with those before, then
 replace the appropriate gaps by missing coverage.'''
 
-import argparse
-import os
-import sys
-import re
-import copy
-from Bio import SeqIO
-from Bio import Seq
-import itertools
-import subprocess
-import collections
-from AuxiliaryFunctions import PropagateNoCoverageChar
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -94,7 +93,7 @@ if len(ConsensusAsString) != len(RefAsString):
   exit(1)
 NewConsensusAsString = ''
 NewRefAsString = ''
-for ConsensusBase, RefBase in itertools.izip(ConsensusAsString, RefAsString):
+for ConsensusBase, RefBase in zip(ConsensusAsString, RefAsString):
   if RefBase == '-' and (ConsensusBase == '-' or ConsensusBase == '?'):
     continue
   else:
@@ -272,4 +271,3 @@ if '?-' in NewConsensus or '-?' in NewConsensus:
 AlignedSeqs[ConsensusPosition].seq = Seq.Seq(NewConsensus)
 
 SeqIO.write(AlignedSeqs, sys.stdout, "fasta")
-

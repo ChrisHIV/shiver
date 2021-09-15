@@ -1,5 +1,15 @@
-#!/usr/bin/env python
+from __future__ import division
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+from builtins import str, range
+
+import pysam
+from Bio import SeqIO
+from ShiverFuncs import CalculateReadIdentity
+from past.utils import old_div
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -8,14 +18,6 @@ from __future__ import print_function
 ExplanatoryMessage = '''Prints the number of mapped bases for a bam file.
 '''
 
-import os
-import collections
-import sys
-import argparse
-import numpy
-import pysam
-from Bio import SeqIO
-from ShiverFuncs import CalculateReadIdentity
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -90,7 +92,7 @@ if BinByIdentity:
     'and less than one minus the minimum (so that there is at least one bin).',\
     'Quitting.', file=sys.stderr)
     exit(1)
-  NumBins = int(Range / BinWidth) + 1
+  NumBins = int(old_div(Range, BinWidth)) + 1
   NumMappedBasesByReadIdentity = [0] * NumBins
 
   def Bin(x):

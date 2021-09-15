@@ -1,5 +1,12 @@
-#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import collections
+import os.path
+import sys
+from builtins import map, str, range
+
+from AuxiliaryFunctions import ReadSequencesFromFile, BaseMatch
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251 
@@ -26,11 +33,6 @@ after a sequence ends are given as the final position in that sequence.
 GapChars = '-?'
 ################################################################################
 
-# Import what's needed
-import sys
-import argparse
-import os.path, collections
-from AuxiliaryFunctions import ReadSequencesFromFile, IUPACdict, BaseMatch
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -122,7 +124,7 @@ AllPrimersShorterThanRef = False
 for PositionMin1 in range(AlignmentLength-1,-1,-1):
   if not ChosenRefSeq[PositionMin1] in GapChars:
     NumRefBasesSoFar += 1
-    for primer,length in PrimerLengths.items():
+    for primer,length in list(PrimerLengths.items()):
       if NumRefBasesSoFar == length:
         PrimerLastChancesForMatch[primer] = PositionMin1+1
     if len(PrimerLastChancesForMatch) == NumUniquePrimers:
@@ -153,7 +155,7 @@ for PositionMin1,base in enumerate(ChosenRefSeq):
   # gaps in the reference.
   # When it equals the primer length, we have found that primer: we record the
   # primer position (start and/or end) in the alignment.
-  for primer,length in PrimerLengths.items():
+  for primer,length in list(PrimerLengths.items()):
     if PositionMin1 > PrimerLastChancesForMatch[primer]-1:
       continue
     matches = 0
@@ -186,8 +188,8 @@ if len(MissingPrimers) != 0:
 # Merge the start and end positions into a single sorted list, each value being
 # coupled to its primer name with 'start_of_' or 'end_of_' prepended.
 SortedList = [['start_of_'+primer,value] for primer,value in \
-StartPrimerPositions.items()] + [['end_of_'+primer,value] for primer,value in \
-EndPrimerPositions.items()]
+list(StartPrimerPositions.items())] + [['end_of_'+primer,value] for primer,value in \
+list(EndPrimerPositions.items())]
 SortedList = sorted(SortedList, key=lambda item: item[1])
 
 if args.AlignmentCoords:
@@ -200,7 +202,7 @@ if args.AlignmentCoords:
 # (ignoring gaps). Only count once through the genome, stopping and restarting
 # when we get to each primer.
 PositionsDict = {}
-for SeqName, seq in SeqDict.items():
+for SeqName, seq in list(SeqDict.items()):
   PositionsWRTseq = []
   LastPositionWRTalignment = 0
   PositionWRTseq = 0

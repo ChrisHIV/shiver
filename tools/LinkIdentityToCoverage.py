@@ -1,5 +1,14 @@
-#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import os
+import subprocess
+import sys
+from builtins import str, range
+
+import pysam
+from Bio import SeqIO
+from ShiverFuncs import CalculateReadIdentity
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -18,13 +27,6 @@ and proportion of contaminant reads is expected to be roughly the same (for
 example, over a data set sequenced in the same way), and then merge the results
 with ~/shiver/tools/LinkIdentityToCoverage_CombineBams.py.'''
 
-import os
-import sys
-import argparse
-import pysam
-import subprocess
-from Bio import SeqIO
-from ShiverFuncs import CalculateReadIdentity
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -171,7 +173,7 @@ for pos in range(RefLength):
 # position-that-has-that-coverage) by that total number of reads gives the mean
 # identity for that coverage.
 outstring = 'Coverage,Number of positions with that coverage,Mean identity'
-for coverage, count in sorted(CoverageCounts.items(), key=lambda x: x[0]):
+for coverage, count in sorted(list(CoverageCounts.items()), key=lambda x: x[0]):
   TotalNumReads = coverage * count
   MeanIdentity = float(IdentityTotalsByCoverage[coverage]) / TotalNumReads
   outstring += '\n' + str(coverage) + ',' + str(count) + ',' + str(MeanIdentity)

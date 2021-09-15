@@ -1,5 +1,14 @@
-#!/usr/bin/env python
+from __future__ import division
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+from builtins import str, map, range, zip
+
+from AuxiliaryFunctions import CallAmbigBaseIfNeeded
+from Bio import AlignIO
+from past.utils import old_div
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -19,12 +28,6 @@ MinFracToCall set to any negative value, and with the options
 argument you used there must be specified here. Output is printed to stdout
 suitable for redirection to a csv file.'''
 
-import argparse
-import os
-import sys
-from Bio import AlignIO
-import itertools
-from AuxiliaryFunctions import CallAmbigBaseIfNeeded
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -153,7 +156,7 @@ def GetFreqs(BaseFreqsFile, consensus):
         continue
       fields = line.split(',')
       try:
-        freqs = map(int, fields[2:])
+        freqs = list(map(int, fields[2:]))
         assert len(freqs) == 6
       except (ValueError, AssertionError):
         print("Unexpected input format of", BaseFreqsFile + ". It appears that",
@@ -268,7 +271,7 @@ NumPosWithHigherCovIn1 = 0
 NumPosWithHigherCovIn2 = 0
 
 # Record each row of the csv file
-for PosMin1, (seq1freqs, seq2freqs) in enumerate(itertools.izip(AllSeq1freqs,
+for PosMin1, (seq1freqs, seq2freqs) in enumerate(zip(AllSeq1freqs,
 AllSeq2freqs)):
   PosInSeq1 = seq1PosConversions[PosMin1]
   PosInSeq2 = seq2PosConversions[PosMin1]
@@ -324,7 +327,7 @@ AllSeq2freqs)):
           for i in range(5):
             SimScoreCont += \
             abs(float(seq1freqs[i])/seq1cov - float(seq2freqs[i])/seq2cov)
-          SimScoreCont = 1 - SimScoreCont/2
+          SimScoreCont = 1 - old_div(SimScoreCont,2)
     if args.compare_simple:
       outstring += ',' + str(SimScoreBin)
     if args.compare:
@@ -333,7 +336,7 @@ AllSeq2freqs)):
 # Print output
 if args.compare_snips_with_coverage:
   simple_total_diffs = 0
-  for PosMin1, (base1, base2) in enumerate(itertools.izip(seq1, seq2)):
+  for PosMin1, (base1, base2) in enumerate(zip(seq1, seq2)):
     if base1 != base2 and \
     PosMin1+1 >= args.start_pos_in_aln and \
     PosMin1+1 <= args.end_pos_in_aln and \

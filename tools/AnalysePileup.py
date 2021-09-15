@@ -1,5 +1,11 @@
-#!/usr/bin/env python2
 from __future__ import print_function
+
+import collections
+import os.path
+import sys
+from builtins import map, str, range
+
+from AuxiliaryFunctions import ReadSequencesFromFile
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -26,8 +32,6 @@ from __future__ import print_function
 RefGenomeExtension = '.fasta'
 ################################################################################
 
-import os.path, sys, collections, operator
-from AuxiliaryFunctions import ReadSequencesFromFile
 
 # Check this file is called from the command line with two arguments
 if len(sys.argv) != 3:
@@ -51,7 +55,7 @@ def ReadReferenceFromFile(File):
     print('Found', len(AllSequences), 'sequences in', ReferenceFile+\
     '; expected 1.\nQuitting.', file=sys.stderr)
     exit(1)
-  return AllSequences.items(), ReferenceLength
+  return list(AllSequences.items()), ReferenceLength
 
 # If a reference file was given, read it in; otherwise just check a directory
 # was specified.
@@ -102,7 +106,7 @@ IsInsertion, ReferenceLength):
       BaseCounts[ReferenceBase] = NumBasesMatchingReference
 
   # Warn about unexpected bases.
-  for base in BaseCounts.keys():
+  for base in list(BaseCounts.keys()):
     if not base in ExpectedBases:
       warning = 'WARNING: unexpected base '+base+' occurs '+\
       str(BaseCounts[base])+' times '
@@ -284,7 +288,7 @@ with open(PileupFile, 'r') as f:
     # Find the most common insertion size here.
     MostCommonInsertionSize = 0
     NumberOfReadsWithMostCommonInsertionSize = NumReadsWithoutInsertion
-    for InsertionSize,AllInsertionsThatSize in insertions.items():
+    for InsertionSize,AllInsertionsThatSize in list(insertions.items()):
       if len(AllInsertionsThatSize) > NumberOfReadsWithMostCommonInsertionSize:
         MostCommonInsertionSize = InsertionSize
         NumberOfReadsWithMostCommonInsertionSize = len(AllInsertionsThatSize)
