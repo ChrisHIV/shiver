@@ -8,8 +8,7 @@ import sys
 from builtins import str, zip
 
 from AuxiliaryFunctions import PropagateNoCoverageChar
-from Bio import Seq
-from Bio import SeqIO
+from Bio import Seq, SeqIO
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
