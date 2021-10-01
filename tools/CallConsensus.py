@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+#!/usr/bin/env python
 import argparse
 import os.path
 import sys

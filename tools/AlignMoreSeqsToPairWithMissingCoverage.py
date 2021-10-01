@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import argparse
 import copy
+#!/usr/bin/env python
 import os
 import subprocess
 import sys
