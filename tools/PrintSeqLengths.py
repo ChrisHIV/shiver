@@ -1,5 +1,13 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import os
+import re
+import sys
+from builtins import str, map
+
+from Bio import SeqIO
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -8,12 +16,6 @@ from __future__ import print_function
 ExplanatoryMessage = '''This script analyses one or more fasta files,
 printing the length of each sequence found therein.'''
 
-import argparse
-import os
-import sys
-import string
-import re
-from Bio import SeqIO
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

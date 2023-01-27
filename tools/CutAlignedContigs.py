@@ -1,5 +1,17 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import collections
+import os.path
+import re
+import sys
+from builtins import str
+
+from Bio import AlignIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from ShiverFuncs import GetSeqStartAndEndPos, RemoveBlankColumns
 
 ## Author: Tanya Golubchik and Chris Wymant chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: written with funding from the ERC Advanced Grant PBDR-339251 
@@ -13,18 +25,6 @@ keep. The intended usage is for a set contigs aligned to a set of references;
 the process of alignment may have introduced large gaps into the contigs that
 should not be interpreted as genuine deletions.'''
 
-
-import os.path
-import sys
-import argparse
-import collections
-import re
-import itertools
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.SeqRecord import SeqRecord
-from Bio.Seq import Seq
-from ShiverFuncs import GetSeqStartAndEndPos, RemoveBlankColumns
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -119,7 +119,7 @@ for seq in AlignedSeqs:
     NumRefSeqs += 1
 
 # Check if any of the named contigs were not found.
-MissingContigs = {contig for contig, found in ContigsFound.items() if not found}
+MissingContigs = {contig for contig, found in list(ContigsFound.items()) if not found}
 if MissingContigs:
   print("The following contigs were not found in " + args.alignment + ":",
   " ".join(MissingContigs) + '\nQuitting.', file=sys.stderr)

@@ -1,5 +1,12 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+from builtins import str
+
+from Bio import SeqIO
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -12,10 +19,6 @@ difference is found we print "true" to stdout and exit with status 0. Any error
 should result in different output printed to stdout/stderr and a non-zero exit
 status.'''
 
-import argparse
-import os
-import sys
-from Bio import SeqIO
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

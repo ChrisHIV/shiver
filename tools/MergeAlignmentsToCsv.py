@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import argparse
+import os
+import sys
+from builtins import str, range
+
+import numpy as np
+from Bio import AlignIO
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -8,12 +16,6 @@ from __future__ import print_function
 ExplanatoryMessage = '''This script takes one or more sequence alignment files as arguments,
 and a chosen reference. All other sequences are represented by what they have at each position where the reference has a base; in general this is a kmer, because sequences can have insertions with respect to the reference. e.g. for sequence = ACGT, ref = A--T, we report that the sequence has ACG at the position where the reference has A. Output is printed to stdout, suitable for redirection to a .csv file.'''
 
-import argparse
-import os
-import sys
-from Bio import AlignIO
-from collections import OrderedDict
-import numpy as np
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

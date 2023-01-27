@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import argparse
+import os
+import sys
+from builtins import range
+
+import numpy as np
+from Bio import AlignIO
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -13,13 +21,6 @@ deletion. Both of these are signed integers, i.e. where the second seq has a
 base and the first has a gap that counts as -1. We print these two values to
 stdout in the order described.'''
 
-import argparse
-import os
-import sys
-import re
-from Bio import AlignIO
-import numpy as np
-import collections
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

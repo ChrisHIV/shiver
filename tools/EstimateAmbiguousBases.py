@@ -1,5 +1,14 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from __future__ import print_function
+
+import argparse
+import collections
+import os
+import sys
+from builtins import str, range
+
+from AuxiliaryFunctions import IUPACdict
+from Bio import AlignIO, SeqIO
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -10,13 +19,6 @@ G or T) an IUPAC ambiguity code in a sequence alignment represents, by using the
 most common of the possibilities at that position in the alignment. Upper/lower
 case is preserved. Gaps are not changed, nor are "N" bases.'''
 
-import argparse
-import os
-import sys
-from Bio import AlignIO
-from Bio import SeqIO
-import collections
-from AuxiliaryFunctions import IUPACdict
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -44,11 +46,11 @@ OKbases = "ACGTNacgtn-?"
 
 BaseCountsByPos = []
 BaseCountTotalsByPos = []
-for pos in xrange(AlignmentLength):
+for pos in range(AlignmentLength):
 
   # Sort the OKbases here by how common they are. (Check there are some!)
   BaseCounts = collections.Counter(alignment[:, pos])
-  BasesObserved = BaseCounts.keys()
+  BasesObserved = list(BaseCounts.keys())
   for base in BasesObserved:
     if not base in OKbases:
       del BaseCounts[base]
@@ -64,10 +66,10 @@ for pos in xrange(AlignmentLength):
 MutableSeqList = [seq.seq.tomutable() for seq in alignment]
 IDs = [seq.id for seq in alignment]
 
-for row in xrange(len(MutableSeqList)):
+for row in range(len(MutableSeqList)):
   SeqAsStr = str(MutableSeqList[row])
   ID = IDs[row]
-  for pos in xrange(AlignmentLength):
+  for pos in range(AlignmentLength):
 
     # Check at this position whether ambiguity interpretation is needed.
     base = SeqAsStr[pos]

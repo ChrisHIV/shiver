@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+from __future__ import division
 from __future__ import print_function
+
+import argparse
+import os
+import sys
+from builtins import map, range, str, zip
+
+from Bio import AlignIO
+from past.utils import old_div
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -28,11 +37,6 @@ alignment of the references instead of the consensuses does not suffer from the
 ambiguity due to missing sequence. Output of this script is printed to stdout
 suitable for redirection to a csv file.'''
 
-import argparse
-import os
-import sys
-from Bio import AlignIO
-import itertools
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -157,7 +161,7 @@ def GetFreqs(BaseFreqsFile, RefSeq):
         ':', RefBase, 'in', BaseFreqsFile, 'but', GaplessRefSeq[RefPos-1],
         'in', args.alignment + '. Quitting.', file=sys.stderr)
         quit(1)
-      freqs = map(int, fields[2:])
+      freqs = list(map(int, fields[2:]))
       assert len(freqs) == 6
       FreqsInRef.append(freqs)
       LastRefPos += 1
@@ -217,7 +221,7 @@ NumPosWithHigherCovIn1 = 0
 NumPosWithHigherCovIn2 = 0
 
 # Record each row of the csv file
-for PosMin1, (ref1freqs, ref2freqs) in enumerate(itertools.izip(ref1freqs,
+for PosMin1, (ref1freqs, ref2freqs) in enumerate(zip(ref1freqs,
 ref2freqs)):
   PosInRef1 = ref1PosConversions[PosMin1]
   PosInRef2 = ref2PosConversions[PosMin1]
@@ -279,7 +283,7 @@ ref2freqs)):
           for i in range(5):
             SimScoreCont += \
             abs(float(ref1freqs[i])/ref1cov - float(ref2freqs[i])/ref2cov)
-          SimScoreCont = 1 - SimScoreCont/2
+          SimScoreCont = 1 - old_div(SimScoreCont,2)
     if args.compare_simple:
       outstring += ',' + str(SimScoreBin)
     if args.compare:

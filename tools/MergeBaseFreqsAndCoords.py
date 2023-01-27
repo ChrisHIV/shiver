@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import argparse
+import csv
+import os
+import re
+import sys
+from builtins import str, range
+
+from Bio import AlignIO
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -17,12 +26,6 @@ coordinate from shiver's transformation is added; in the second case, the
 coordinate of the other sequence is added. Output is printed to stdout, suitable
 for redirection to a csv file.'''
 
-import sys
-import os
-import csv
-import re
-import argparse
-from Bio import AlignIO
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):

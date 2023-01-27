@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import argparse
+import os
+import sys
+from builtins import str
+
+from AuxiliaryFunctions import IUPACdict
+from Bio import SeqIO, Seq
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -13,15 +21,8 @@ consensus: where the consensus has '?' or 'N' we use the reference base; where
 the consensus has an ambiguity code we take the first (in alphabetical order) of
 the bases A, C, G or T that that code represents; otherwise, we use the base (or
 gap) of the consensus. Output is printed to stdout suitable for redirection to a
-fasta file.''' 
+fasta file.'''
 
-import argparse
-import os
-import sys
-from Bio import SeqIO
-from Bio import Seq
-import itertools
-from AuxiliaryFunctions import PropagateNoCoverageChar, IUPACdict
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -66,7 +67,7 @@ if len(ConsensusAsString) != len(RefAsString):
 # The main bit.
 NewConsensus = ''
 ExpectedBases = ['A', 'C', 'G', 'T', '-']
-for ConsensusBase, RefBase in itertools.izip(ConsensusAsString, RefAsString):
+for ConsensusBase, RefBase in zip(ConsensusAsString, RefAsString):
   if ConsensusBase == '?' or ConsensusBase == 'N':
     NewConsensus += RefBase
   elif ConsensusBase in ExpectedBases:

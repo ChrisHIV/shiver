@@ -1,5 +1,16 @@
-#!/usr/bin/env python
+from __future__ import division
 from __future__ import print_function
+
+#!/usr/bin/env python
+import argparse
+import collections
+import copy
+import os
+import sys
+from builtins import str, map, range
+
+from Bio import SeqIO
+from past.utils import old_div
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk and Francois Blanquart who
 ## wrote the original version of this script in R. Thanks to Tanya Golubchick
@@ -18,12 +29,6 @@ cutting the contigs where they have multiple hits and/or reverse-complementing
 them where hits are in the reverse direction.
 '''
 
-import argparse
-import os
-import sys
-import copy
-from Bio import SeqIO
-import collections
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -264,7 +269,7 @@ def MergeStronglyOverlappingHits(hits, MinOverlap):
   return hits
 
 CorrectionsNeeded = False
-for contig, hits in HitDict.items():
+for contig, hits in list(HitDict.items()):
 
   # Where a contig has one hit contained entirely inside another, remove the
   # sub-hit.
@@ -341,7 +346,7 @@ for contig, hits in HitDict.items():
 # Write the blast output if desired.
 if args.blast_output != None:
   with open(args.blast_output, "w") as f:
-    for contig, hits in HitDict.items():
+    for contig, hits in list(HitDict.items()):
       for hit in hits:
         f.write(",".join(map(str, hit)) + "\n")
 
@@ -360,7 +365,7 @@ for seq in SeqIO.parse(open(args.contigs),'fasta'):
   ContigDict[seq.id] = seq
 
 # Check we have a sequence for each hit
-UnknownHits = [hit for hit in HitDict.keys() if not hit in ContigDict.keys()]
+UnknownHits = [hit for hit in list(HitDict.keys()) if not hit in list(ContigDict.keys())]
 if len(UnknownHits) != 0:
   print('The following hits in', args.BlastFile, 'do not have a corresponding',\
   'sequence in', args.contigs +':\n', ' '.join(UnknownHits) + \
@@ -368,7 +373,7 @@ if len(UnknownHits) != 0:
   exit(1)
 
 OutSeqs = []
-for ContigName, hits in HitDict.items():
+for ContigName, hits in list(HitDict.items()):
 
   seq = ContigDict[ContigName]
   SeqLength = len(seq.seq)
@@ -441,16 +446,16 @@ for ContigName, hits in HitDict.items():
           if i == 0:
             NextStart, NextEnd = hits[i+1][5:7]
             CutStart = 1
-            CutEnd = (ThisEnd + NextStart) / 2
+            CutEnd = old_div((ThisEnd + NextStart), 2)
           elif i == NumHits-1:
             LastStart, LastEnd = hits[i-1][5:7]
-            CutStart = (LastEnd + ThisStart) / 2 + 1
+            CutStart = old_div((LastEnd + ThisStart), 2) + 1
             CutEnd = SeqLength
           else:
             LastStart, LastEnd = hits[i-1][5:7]
             NextStart, NextEnd = hits[i+1][5:7]
-            CutStart = (LastEnd + ThisStart) / 2 + 1
-            CutEnd = (ThisEnd + NextStart) / 2
+            CutStart = old_div((LastEnd + ThisStart), 2) + 1
+            CutEnd = old_div((ThisEnd + NextStart), 2)
 
         # For this block, we want to discard sequence that's not inside a hit,
         # and cut in half sequence that's overlapped by two hits.
@@ -458,16 +463,16 @@ for ContigName, hits in HitDict.items():
           if i == 0:
             NextStart, NextEnd = hits[i+1][5:7]
             CutStart = ThisStart
-            CutEnd = min(ThisEnd, (ThisEnd + NextStart) / 2)
+            CutEnd = min(ThisEnd, old_div((ThisEnd + NextStart), 2))
           elif i == NumHits-1:
             LastStart, LastEnd = hits[i-1][5:7]
-            CutStart = max(ThisStart, (LastEnd + ThisStart) / 2 + 1)
+            CutStart = max(ThisStart, old_div((LastEnd + ThisStart), 2) + 1)
             CutEnd = ThisEnd
           else:
             LastStart, LastEnd = hits[i-1][5:7]
             NextStart, NextEnd = hits[i+1][5:7]
-            CutStart = max(ThisStart, (LastEnd + ThisStart) / 2 + 1)
-            CutEnd = min(ThisEnd, (ThisEnd + NextStart) / 2)
+            CutStart = max(ThisStart, old_div((LastEnd + ThisStart), 2) + 1)
+            CutEnd = min(ThisEnd, old_div((ThisEnd + NextStart), 2))
 
       ThisCutSeq = copy.deepcopy(seq)
       ThisCutSeq.seq = ThisCutSeq.seq[CutStart-1 : CutEnd]

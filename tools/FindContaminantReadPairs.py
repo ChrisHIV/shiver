@@ -1,6 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from __future__ import print_function
-#
+
+import os.path
+import sys
+from builtins import str
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -27,9 +31,6 @@ column_sacc = 2
 column_evalue = 4
 ################################################################################
 
-# Import some modules we'll need.
-import os.path
-import sys
 
 # Check that this script was called from the command line with two arguments.
 if len(sys.argv) != 5:
@@ -83,7 +84,7 @@ HitsFor2reads = ReadBlastFile(BlastFileFor2reads)
 
 # Find contaminant read pairs
 ContaminantReadPairs = []
-for ReadName, [read1Hit, read1Evalue] in HitsFor1reads.items():
+for ReadName, [read1Hit, read1Evalue] in list(HitsFor1reads.items()):
 
   try:
     [read2Hit,read2Evalue] = HitsFor2reads[ReadName]

@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import argparse
+import collections
+import os
+import sys
+from builtins import str, range
+
+import pysam
+
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
 ##
@@ -9,11 +17,6 @@ ExplanatoryMessage = '''Gives the coverage - the depth/number of mapped reads at
 each position - for a bam file. Output printed to stdout suitable for
 redirection into a csv file.'''
 
-import os
-import collections
-import sys
-import argparse
-import pysam
 
 # Define a function to check files exist, as a type for the argparse.
 def File(MyFile):
@@ -62,5 +65,5 @@ for pos in range(min_ref_pos, max_ref_pos + 1):
     counts_by_ref_pos[pos] = 0
 
 print("reference position (1-based),coverage")
-for pos, coverage in sorted(counts_by_ref_pos.items(), key=lambda x:x[0]):
+for pos, coverage in sorted(list(counts_by_ref_pos.items()), key=lambda x:x[0]):
   print(pos + 1, coverage, sep=",")
