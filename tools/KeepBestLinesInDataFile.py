@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -106,10 +106,10 @@ with open(args.out_file, "w") as f:
   if args.header:
     f.write(header)
   if args.order_by_id:
-    for value in sorted(rows_to_keep.values(),
+    for value in sorted(list(rows_to_keep.values()),
     key=lambda x: x[0].split(",", 1)[0]):
       f.write(value[0])
   else:
-    for value in rows_to_keep.values():
+    for value in list(rows_to_keep.values()):
       f.write(value[0])
 

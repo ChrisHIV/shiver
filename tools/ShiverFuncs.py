@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import sys
 
 def CalculateReadIdentity(PysamRead, ReferenceSeq):
@@ -62,7 +62,7 @@ def RemoveBlankColumns(alignment, BlankChars="-", RemoveUninformative=False):
   any column that is 'uninformative' (all non-blank characters are the same).'''
 
   AlignmentLength = alignment.get_alignment_length()
-  for column in reversed(xrange(AlignmentLength)):
+  for column in reversed(range(AlignmentLength)):
     RemoveThisCol = True
     FirstBaseSeen = None
     for base in alignment[:, column]:

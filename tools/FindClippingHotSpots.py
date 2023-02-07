@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -98,14 +98,14 @@ if NumReads == 0:
 ClipPositionCounts = collections.Counter(ClipPositions)
 
 if args.min_read_count > 1:
-  ClipPositionCounts = {key:value for key, value in ClipPositionCounts.items() \
+  ClipPositionCounts = {key:value for key, value in list(ClipPositionCounts.items()) \
   if value >= args.min_read_count}
 
 # Print the output
 output = 'Reference position, Number of reads clipped, Percentage of spanning'+\
 ' reads clipped'
 
-for pos, count in sorted(ClipPositionCounts.items(), key=lambda x:x[1], \
+for pos, count in sorted(list(ClipPositionCounts.items()), key=lambda x:x[1], \
 reverse=True):
   # 100% of reads overhanging the start or end of the reference are clipped.
   if pos == 0 or pos == RefLength:

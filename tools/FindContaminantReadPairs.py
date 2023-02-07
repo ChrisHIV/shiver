@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-from __future__ import print_function
+#!/usr/bin/env python
+
 #
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -83,7 +83,7 @@ HitsFor2reads = ReadBlastFile(BlastFileFor2reads)
 
 # Find contaminant read pairs
 ContaminantReadPairs = []
-for ReadName, [read1Hit, read1Evalue] in HitsFor1reads.items():
+for ReadName, [read1Hit, read1Evalue] in list(HitsFor1reads.items()):
 
   try:
     [read2Hit,read2Evalue] = HitsFor2reads[ReadName]

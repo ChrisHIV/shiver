@@ -68,7 +68,7 @@ if [[ "$TrimPrimerWithOneSNP" == "true" ]]; then
     "in the config file was set to false when you ran shiver_init.sh, and you"\
     "changed it to true afterwards? You can generate this file from your"\
     "primers by running" >&2
-    echo "$python2" "$Code_AddSNPsToSeqs $InitDir/primers.fasta"\
+    echo "$python" "$Code_AddSNPsToSeqs $InitDir/primers.fasta"\
     "$InitDir/PrimersWithSNPs.fasta" >&2
     echo "(Though be careful copying and pasting that if any file paths"\
     "contain whitespace.) Quitting." >&2
@@ -124,7 +124,7 @@ elif [ "$NumSeqsInFastaFile" -eq 1 ]; then
 
   # Try to find the sequence in FastaFile in ExistingRefAlignment.
   RefName=$(awk '/^>/ {print substr($1,2)}' "$FastaFile")
-  "$python2" "$Code_FindSeqsInFasta" "$ExistingRefAlignment" -g -N "$RefName" > \
+  "$python" "$Code_FindSeqsInFasta" "$ExistingRefAlignment" -g -N "$RefName" > \
   "$RefFromAlignment" || \
   { echo "Could not find seq $RefName in $ExistingRefAlignment; that's OK," \
   'but after mapping we will not be able to produce a version of the' \
@@ -133,7 +133,7 @@ elif [ "$NumSeqsInFastaFile" -eq 1 ]; then
 
   # Compare the sequence in FastaFile to the one in ExistingRefAlignment.
   if $RefIsInAlignment; then
-    equal=$("$python2" "$Code_CheckFastaFileEquality" "$RefFromAlignment" "$FastaFile") ||
+    equal=$("$python" "$Code_CheckFastaFileEquality" "$RefFromAlignment" "$FastaFile") ||
     { echo 'Problem running' "$Code_CheckFastaFileEquality"'. Quitting.' >&2 ; \
     exit 1 ; }
     if [[ "$equal" == "false" ]]; then
@@ -159,7 +159,7 @@ elif [ "$NumSeqsInFastaFile" -eq 1 ]; then
   # Extract those contigs that have a blast hit.
   NumHIVContigsOrig=$(wc -w "$HIVContigsListOrig" | awk '{print $1}')
   if [[ $NumHIVContigsOrig -gt 0 ]]; then
-    "$python2" "$Code_FindSeqsInFasta" "$RawContigsFile" -F "$HIVContigsListOrig" > \
+    "$python" "$Code_FindSeqsInFasta" "$RawContigsFile" -F "$HIVContigsListOrig" > \
     "$RawContigFile2" || \
     { echo 'Problem extracting the HIV contigs. Quitting.' >&2 ; exit 1 ; }
   fi
@@ -190,16 +190,16 @@ else
   # ContigToRefAlignment, and check that they are the same as in
   # ExistingRefAlignment. Also extract just the contigs, stripping gaps, ready
   # for later.
-  "$python2" "$Code_FindSeqsInFasta" "$ContigToRefAlignment" -F "$HIVContigsListUser" -v > \
+  "$python" "$Code_FindSeqsInFasta" "$ContigToRefAlignment" -F "$HIVContigsListUser" -v > \
   "$TempRefAlignment" &&
-  "$python2" "$Code_FindSeqsInFasta" "$ContigToRefAlignment" -F "$HIVContigsListUser" -g > \
+  "$python" "$Code_FindSeqsInFasta" "$ContigToRefAlignment" -F "$HIVContigsListUser" -g > \
   "$RawContigFile2" || { echo 'Problem separating the contigs and existing'\
   "refs in $ContigToRefAlignment. Quitting." >&2 ; exit 1 ; }
-  "$python2" "$Code_RemoveBlankCols" "$TempRefAlignment" > "$AlignmentForTesting" || \
+  "$python" "$Code_RemoveBlankCols" "$TempRefAlignment" > "$AlignmentForTesting" || \
   { echo "Problem removing pure-gap columns from $TempRefAlignment (which was"\
   "created by removing the contigs from $ContigToRefAlignment - that's"\
   "probably the problematic file). Quitting." >&2 ; exit 1; }
-  equal=$("$python2" "$Code_CheckFastaFileEquality" "$AlignmentForTesting" \
+  equal=$("$python" "$Code_CheckFastaFileEquality" "$AlignmentForTesting" \
   "$ExistingRefAlignment") || { echo "Problem running"\
   "$Code_CheckFastaFileEquality. Quitting." >&2 ; exit 1 ; }
   if [[ "$equal" == "false" ]]; then
@@ -216,7 +216,7 @@ else
 
   # Construct the tailored ref
   HIVcontigNames=$(cat "$HIVContigsListUser")
-  "$python2" "$Code_ConstructRef" "$ContigToRefAlignment" "$GappyRefWithExtraSeq" \
+  "$python" "$Code_ConstructRef" "$ContigToRefAlignment" "$GappyRefWithExtraSeq" \
   $HIVcontigNames || \
   { echo 'Failed to construct a ref from the alignment. Quitting.' >&2 ; \
   exit 1 ; }
@@ -225,7 +225,7 @@ else
   awk '/^>/{if(N)exit;++N;} {print;}' "$GappyRefWithExtraSeq" > "$RefWithGaps"
 
   # Remove any gaps from the reference
-  "$python2" "$Code_UngapFasta" "$RefWithGaps" > "$TheRef" || \
+  "$python" "$Code_UngapFasta" "$RefWithGaps" > "$TheRef" || \
   { echo 'Gap stripping code failed. Quitting.' >&2 ; exit 1 ; }
 
   RefName=$(awk '/^>/ {print substr($1,2)}' "$TheRef")
@@ -385,7 +385,7 @@ else
   # ...and now remove from these contigs those that are too short, leaving only
   # contaminants.
   if [ "$NumContaminantContigs" -gt 0 ]; then
-    "$python2" "$Code_FindSeqsInFasta" "$RawContigsFile" -F "$DiscardedContigNames" \
+    "$python" "$Code_FindSeqsInFasta" "$RawContigsFile" -F "$DiscardedContigNames" \
     --min-length "$MinContigLength" > "$RefAndContaminantContigs" ||
     { echo "Problem extracting contaminant contigs from $RawContigsFile." \
     "Quitting." >&2; exit 1; }
@@ -436,13 +436,13 @@ else
     # For multiple blast hits, keep the one with the highest evalue
     # TODO: test what blast does with fasta headers that have comments in them -
     # does it include them too?
-    "$python2" "$Code_KeepBestLinesInDataFile" "$reads1blast1" "$reads1blast2" &&
-    "$python2" "$Code_KeepBestLinesInDataFile" "$reads2blast1" "$reads2blast2" || 
+    "$python" "$Code_KeepBestLinesInDataFile" "$reads1blast1" "$reads1blast2" &&
+    "$python" "$Code_KeepBestLinesInDataFile" "$reads2blast1" "$reads2blast2" || 
     { echo "Problem extracting the best blast hits using"\
     "$Code_KeepBestLinesInDataFile. Quitting." >&2 ; exit 1 ; }
 
     # Find the read pairs that blast best to something other than the reference.
-    "$python2" "$Code_FindContaminantReadPairs" "$reads1blast2" "$reads2blast2" \
+    "$python" "$Code_FindContaminantReadPairs" "$reads1blast2" "$reads2blast2" \
     "$RefName" "$BadReadsBaseName" && ls "$BadReadsBaseName"_1.txt \
     "$BadReadsBaseName"_2.txt > /dev/null 2>&1 || \
     { echo 'Problem finding contaminant read pairs using' \
@@ -478,9 +478,9 @@ else
       fi
 
       # Extract the non-contaminant read pairs
-      "$python2" "$Code_FindReadsInFastq" -v -s "$reads1" "$BadReadsBaseName"_1.txt > \
+      "$python" "$Code_FindReadsInFastq" -v -s "$reads1" "$BadReadsBaseName"_1.txt > \
       "$cleaned1reads" &&
-      "$python2" "$Code_FindReadsInFastq" -v -s "$reads2" "$BadReadsBaseName"_2.txt > \
+      "$python" "$Code_FindReadsInFastq" -v -s "$reads2" "$BadReadsBaseName"_2.txt > \
       "$cleaned2reads" || \
       { echo 'Problem extracting the non-contaminant reads using' \
       "$Code_FindReadsInFastq"'. Quitting.' >&2 ; exit 1 ; }
@@ -492,9 +492,9 @@ else
       # Map the contaminant reads to the reference, to measure how useful the
       # cleaning procedure was.
       if [[ "$MapContaminantReads" == "true" ]]; then
-        "$python2" "$Code_FindReadsInFastq" -s "$reads1" "$BadReadsBaseName"_1.txt > \
+        "$python" "$Code_FindReadsInFastq" -s "$reads1" "$BadReadsBaseName"_1.txt > \
         "$BadReadsBaseName"_1.fastq &&
-        "$python2" "$Code_FindReadsInFastq" -s "$reads2" "$BadReadsBaseName"_2.txt > \
+        "$python" "$Code_FindReadsInFastq" -s "$reads2" "$BadReadsBaseName"_2.txt > \
         "$BadReadsBaseName"_2.fastq || \
         { echo 'Problem extracting the contaminant reads using' \
         "$Code_FindReadsInFastq. Quitting." >&2 ; exit 1 ; }
@@ -538,13 +538,13 @@ fi
 # Add gaps and excise unique insertions, to allow this consensus to be added to
 # a global alignment with others.
 if $RefIsInAlignment; then
-  "$python2" "$Code_MergeAlignments" "$GlobalAlignExcisionFlag" -L "$CoordsDict" \
+  "$python" "$Code_MergeAlignments" "$GlobalAlignExcisionFlag" -L "$CoordsDict" \
   "$TempRefAlignment" "$consensus" > "$ConsensusForGlobalAln" ||
   { echo 'Problem translating the coordinates of the consensus for the'\
   'global alignment. Quitting.' >&2 ; exit 1 ; }
 
   # Add the global alignment coordinates to the base frequencies file.
-  "$python2" "$Code_MergeBaseFreqsAndCoords" "$BaseFreqs" -C "$CoordsDict" > \
+  "$python" "$Code_MergeBaseFreqsAndCoords" "$BaseFreqs" -C "$CoordsDict" > \
   "$BaseFreqsWGlobal" || { echo 'Problem adding the global alignment'\
   'coordinates to the base frequencies file. Quitting.' >&2 ; exit 1 ; }
 
@@ -561,7 +561,7 @@ if [[ "$remap" == "true" ]]; then
 
   # Fill in any gaps in the consensus with the corresponding part of the orginal
   # reference for mapping.
-  "$python2" "$Code_FillConsensusGaps" "$consensus" '--output-seq-name' \
+  "$python" "$Code_FillConsensusGaps" "$consensus" '--output-seq-name' \
   "$NewRefName" > "$NewRef" || { echo 'Problem'\
   'filling in gaps in the consensus with the corresponding part of the orginal'\
   'reference for mapping. Quitting.' >&2 ; exit 1 ; }

@@ -64,14 +64,14 @@ database="$OutDir"/'ExistingRefsBlastDatabase'
 
 # Copy the three input fasta files into the initialisation directory, removing
 # pure-gap columns from RefAlignment.
-"$python2" "$Code_RemoveBlankCols" "$RefAlignment" > "$NewRefAlignment" || \
+"$python" "$Code_RemoveBlankCols" "$RefAlignment" > "$NewRefAlignment" || \
 { echo "Problem removing pure-gap columns from $RefAlignment. Quitting." >&2 ; \
 exit 1; }
 cp "$adapters" "$OutDir"/'adapters.fasta'
 cp "$primers" "$OutDir"/'primers.fasta'
 
 if [[ "$TrimPrimerWithOneSNP" == "true" ]]; then
-  "$python2" "$Code_AddSNPsToSeqs" "$OutDir/primers.fasta" \
+  "$python" "$Code_AddSNPsToSeqs" "$OutDir/primers.fasta" \
   "$OutDir/PrimersWithSNPs.fasta" || { echo "Problem generating all possible"\
   "variants of the sequences in $primers differing by a single base mutation."\
   "Quitting." >&2; exit 1; }
@@ -100,7 +100,7 @@ if [[ "$RefNames" == *","* ]]; then
 fi
 
 # Ungap RefAlignment
-"$python2" "$Code_UngapFasta" "$NewRefAlignment" > "$UngappedRefs" || \
+"$python" "$Code_UngapFasta" "$NewRefAlignment" > "$UngappedRefs" || \
 { echo "Problem ungapping $RefAlignment. Quitting." >&2 ; exit 1; }
 
 # Create the blast database
@@ -115,5 +115,5 @@ IndividualRefDir="$OutDir"/'IndividualRefs'
 mkdir -p "$IndividualRefDir" || \
 { echo "Problem making the directory $IndividualRefDir. Quitting." >&2 ; \
 exit 1; }
-"$python2" "$Code_SplitFasta" -G "$RefAlignment" "$IndividualRefDir" || { echo "Problem" \
+"$python" "$Code_SplitFasta" -G "$RefAlignment" "$IndividualRefDir" || { echo "Problem" \
 "splitting $RefAlignment into one file per sequence. Quitting." >&2 ; exit 1; }

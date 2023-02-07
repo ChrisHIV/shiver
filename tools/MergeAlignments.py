@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-from __future__ import print_function
+#!/usr/bin/env python
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251 
@@ -81,8 +81,8 @@ for InputFile in [MainAlnFile, PairedAlnFile]:
 
 # Read in the sequences from the main alignment file (into a dictionary)
 MainAlnSeqDict, MainAlnSeqLength = ReadSequencesFromFile(MainAlnFile)
-MainAlnSeqNames = MainAlnSeqDict.keys()
-MainAlnSeqs     = MainAlnSeqDict.values()
+MainAlnSeqNames = list(MainAlnSeqDict.keys())
+MainAlnSeqs     = list(MainAlnSeqDict.values())
 
 
 # Read in the sequences from the paired alignment file
@@ -93,7 +93,7 @@ if len(PairedAlnSeqDict) != 2:
   print('File', PairedAlnFile, 'contains', len(PairedAlnSeqDict),\
   'sequences; two were expected.\nQuitting.', file=sys.stderr)
   exit(1)
-Seq1name, Seq2name = PairedAlnSeqDict.keys()
+Seq1name, Seq2name = list(PairedAlnSeqDict.keys())
 
 # Check that one of the sequences is in the main alignment file (the 'Ref')
 # and one is not (the 'SeqToAdd').
@@ -178,7 +178,7 @@ for MainPosition,BaseInMainRef in enumerate(RefSeqFromMain):
     EveryBaseHereIsAGap = False
     if ExciseUniqueInsertionsOfRefInMainAlignment:
       EveryBaseHereIsAGap = True
-      for SeqName, seq in MainAlnSeqDict.items():
+      for SeqName, seq in list(MainAlnSeqDict.items()):
         if SeqName == RefSeqName:
           continue
         elif seq[MainPosition] != GapChar:
@@ -195,7 +195,7 @@ for MainPosition,BaseInMainRef in enumerate(RefSeqFromMain):
     RefInMainHasUniqueInsertion = False
     if ExciseUniqueInsertionsOfRefInMainAlignment:
       RefInMainHasUniqueInsertion = True
-      for SeqName, seq in MainAlnSeqDict.items():
+      for SeqName, seq in list(MainAlnSeqDict.items()):
         if SeqName == RefSeqName:
           continue
         elif seq[MainPosition] != GapChar:
@@ -222,7 +222,7 @@ FinalSeqToAdd = PropagateNoCoverageChar(SeqToAdd_WithGaps)
 # Thanks Stackoverflow:
 def insert_newlines(string, every=FastaSeqLineLength):
     lines = []
-    for i in xrange(0, len(string), every):
+    for i in range(0, len(string), every):
         lines.append(string[i:i+every])
     return '\n'.join(lines)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -197,12 +197,12 @@ if have_dates:
 
 # Iterate through patients and the set of seqs for each patient.
 final_seqs_dict = {}
-for beehive_id, sub_seq_dict in seq_dict.iteritems():
+for beehive_id, sub_seq_dict in seq_dict.items():
 
   # If this patient only has one sequence, nothing to do except restrict the 
   # seq id to the patient id and the date.
   if len(sub_seq_dict) == 1:
-    seq_id, seq_as_str = sub_seq_dict.items()[0]
+    seq_id, seq_as_str = list(sub_seq_dict.items())[0]
     seq_id_pieces = seq_id.split("_")
     seq_id_to_use = beehive_id + "_" + seq_id_pieces[1]
     assert not seq_id_to_use in final_seqs_dict
@@ -211,14 +211,14 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
 
   # Now we have multiple sequences for this patient. First, group them by date.
   seqs_by_date = collections.defaultdict(list)
-  for seq_id, seq_as_str in sub_seq_dict.iteritems():
+  for seq_id, seq_as_str in sub_seq_dict.items():
     date = seq_id.split("_", 2)[1]
     seqs_by_date[date].append(seq_as_str)
 
   # Merge multiple seqs from the same date: rank them by length, and at each
   # position use the base of the best seq that doesn't have an N there.
   merged_seqs_dict = {}
-  for date, seqs in seqs_by_date.iteritems():
+  for date, seqs in seqs_by_date.items():
     num_seqs = len(seqs)
     if num_seqs == 1:
       best_seq = seqs[0]
@@ -228,9 +228,9 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
       seqs_by_length = sorted(seqs, key=lambda seq : num_known_bases(seq),
       reverse=True)
       best_seq = ""
-      for pos in xrange(alignment_length):
+      for pos in range(alignment_length):
         best_base = "N"
-        for i in xrange(num_seqs):
+        for i in range(num_seqs):
           base = seqs_by_length[i][pos]
           if base != "N":
             best_base = base
@@ -240,7 +240,7 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
 
   # If we're including all dates for each pat, do so now...
   if not have_dates:
-    for date, seq in merged_seqs_dict.items():
+    for date, seq in list(merged_seqs_dict.items()):
       seq_id_to_use = beehive_id + "_" + date
       assert not seq_id_to_use in final_seqs_dict
       final_seqs_dict[seq_id_to_use] = seq
@@ -249,7 +249,7 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
 
   # If there is only one date, no choice:
   if len(merged_seqs_dict) == 1:
-    date, seq = merged_seqs_dict.items()[0]
+    date, seq = list(merged_seqs_dict.items())[0]
     seq_id_to_use = beehive_id + "_" + date
     assert not seq_id_to_use in final_seqs_dict
     final_seqs_dict[seq_id_to_use] = seq
@@ -263,7 +263,7 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
     pass
   else:
     if len(merged_seqs_dict) == 1:
-      date, seq = merged_seqs_dict.items()[0]
+      date, seq = list(merged_seqs_dict.items())[0]
       seq_id_to_use = beehive_id + "_" + date
       assert not seq_id_to_use in final_seqs_dict
       final_seqs_dict[seq_id_to_use] = seq
@@ -301,11 +301,11 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
     date_to_use = date_sampled
     if args.verbose:
       print("For", beehive_id, "with seq dates",
-      " and ".join(merged_seqs_dict.keys()) + ", using date", date_sampled,
+      " and ".join(list(merged_seqs_dict.keys())) + ", using date", date_sampled,
       "as this perfectly matches the Date.sampled in", args.date_sampled_csv)
   else:
     date_to_use = None
-    for seq_date in merged_seqs_dict.keys():
+    for seq_date in list(merged_seqs_dict.keys()):
       if date_to_use == None:
         seq_date_object = datetime.datetime.strptime(seq_date, '%Y-%m-%d')
         min_date_diff = abs((date_sampled_date_object - seq_date_object).days)
@@ -318,7 +318,7 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
           date_to_use = date
     if args.verbose:
       print("For", beehive_id, "with seq dates",
-      " and ".join(merged_seqs_dict.keys()) + ", using date", date_to_use,
+      " and ".join(list(merged_seqs_dict.keys())) + ", using date", date_to_use,
       "as this is the closest match to the Date.sampled -", date_sampled,
       "- in", args.date_sampled_csv)
 
@@ -329,11 +329,11 @@ for beehive_id, sub_seq_dict in seq_dict.iteritems():
   final_seqs_dict[seq_id_to_use] = seq_to_use
 
 # Iteratively replace gaps that border N by N.
-for seq_id, seq in final_seqs_dict.iteritems():
+for seq_id, seq in final_seqs_dict.items():
   final_seqs_dict[seq_id] = PropagateNoCoverageChar(seq)
 
 # Output the final seqs, sorted by name.
 sorted_seq_objects = [SeqIO.SeqRecord(Seq.Seq(seq), id=seq_id, description='') \
-for seq_id, seq in sorted(final_seqs_dict.items(), key=lambda x:x[0])]
+for seq_id, seq in sorted(list(final_seqs_dict.items()), key=lambda x:x[0])]
 SeqIO.write(sorted_seq_objects, args.output_file, 'fasta')
 

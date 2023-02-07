@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk and Francois Blanquart who
 ## wrote the original version of this script in R. Thanks to Tanya Golubchick
@@ -264,7 +264,7 @@ def MergeStronglyOverlappingHits(hits, MinOverlap):
   return hits
 
 CorrectionsNeeded = False
-for contig, hits in HitDict.items():
+for contig, hits in list(HitDict.items()):
 
   # Where a contig has one hit contained entirely inside another, remove the
   # sub-hit.
@@ -341,7 +341,7 @@ for contig, hits in HitDict.items():
 # Write the blast output if desired.
 if args.blast_output != None:
   with open(args.blast_output, "w") as f:
-    for contig, hits in HitDict.items():
+    for contig, hits in list(HitDict.items()):
       for hit in hits:
         f.write(",".join(map(str, hit)) + "\n")
 
@@ -360,7 +360,7 @@ for seq in SeqIO.parse(open(args.contigs),'fasta'):
   ContigDict[seq.id] = seq
 
 # Check we have a sequence for each hit
-UnknownHits = [hit for hit in HitDict.keys() if not hit in ContigDict.keys()]
+UnknownHits = [hit for hit in list(HitDict.keys()) if not hit in list(ContigDict.keys())]
 if len(UnknownHits) != 0:
   print('The following hits in', args.BlastFile, 'do not have a corresponding',\
   'sequence in', args.contigs +':\n', ' '.join(UnknownHits) + \
@@ -368,7 +368,7 @@ if len(UnknownHits) != 0:
   exit(1)
 
 OutSeqs = []
-for ContigName, hits in HitDict.items():
+for ContigName, hits in list(HitDict.items()):
 
   seq = ContigDict[ContigName]
   SeqLength = len(seq.seq)

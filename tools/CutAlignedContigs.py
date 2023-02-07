@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-from __future__ import print_function
+#!/usr/bin/env python
+
 
 ## Author: Tanya Golubchik and Chris Wymant chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: written with funding from the ERC Advanced Grant PBDR-339251 
@@ -119,7 +119,7 @@ for seq in AlignedSeqs:
     NumRefSeqs += 1
 
 # Check if any of the named contigs were not found.
-MissingContigs = {contig for contig, found in ContigsFound.items() if not found}
+MissingContigs = {contig for contig, found in list(ContigsFound.items()) if not found}
 if MissingContigs:
   print("The following contigs were not found in " + args.alignment + ":",
   " ".join(MissingContigs) + '\nQuitting.', file=sys.stderr)

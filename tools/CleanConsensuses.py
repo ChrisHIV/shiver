@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -218,10 +218,10 @@ with open(args.amplicon_regions_file, 'r') as f:
     regions_dict[region] = (start, end)
     regions_dict_not_empty = True
 last_region = next(reversed(regions_dict))
-first_region = regions_dict.keys()[0]
+first_region = list(regions_dict.keys())[0]
 last_start, last_end = regions_dict[last_region]
 first_start = regions_dict[first_region][0]
-regions = regions_dict.keys()
+regions = list(regions_dict.keys())
 num_regions = len(regions)
 
 # If we're splitting amplicons, set up file names for the per-region output
@@ -244,7 +244,7 @@ if args.split_amplicons:
   else:
     per_region_output_file_dict = {region : os.path.join(args.output,
     "region_" + region + ".fasta") for region in regions}
-  for output_file in per_region_output_file_dict.values():
+  for output_file in list(per_region_output_file_dict.values()):
     if os.path.isfile(output_file):
       print(output_file, "exists already; quitting to prevent overwriting.",
       file=sys.stderr)
@@ -448,7 +448,7 @@ for seq in collection_of_seqs:
       exit(1)
     regions_dict_this_aln = {}
     this_reference_by_region = {}
-    for region, region_boundaries in regions_dict.items():
+    for region, region_boundaries in list(regions_dict.items()):
       start_in_this_aln, end_in_this_aln = \
       TranslateSeqCoordsToAlnCoords(this_reference, region_boundaries)
       regions_dict_this_aln[region] = (start_in_this_aln, end_in_this_aln)
@@ -563,7 +563,7 @@ for seq in collection_of_seqs:
     # Add our own blacklisting of regions, based on the fraction that's not "N",
     # for regions that have not already been blacklisted.
     if not args.dont_blacklist_missingness:
-      for region_num in xrange(num_regions):
+      for region_num in range(num_regions):
         seq_in_blacklist = seq_id in seq_blacklist_dict
         if seq_in_blacklist and not seq_blacklist_dict[seq_id][region_num + 1]:
           continue
@@ -602,7 +602,7 @@ for seq in collection_of_seqs:
         ": discarding whole sequence as it was blacklisted.", sep='')
       continue
 
-    for region_num in xrange(num_regions):
+    for region_num in range(num_regions):
 
       # Mask blacklisted regions.
       keep_region = seq_blacklist_values[region_num + 1]
@@ -632,7 +632,7 @@ for seq in collection_of_seqs:
   if have_individual_consensus:
     seq_as_str = PropagateNoCoverageChar(seq_as_str)
     if args.split_amplicons:
-      for region, (start, end) in regions_dict_this_aln.items():
+      for region, (start, end) in list(regions_dict_this_aln.items()):
         region_length = end - start + 1
         seq_here = seq_as_str[start - 1: end].replace("-", "") # strip gaps
         seq_here = seq_here.strip("N") # strip Ns at the ends
@@ -720,9 +720,9 @@ if args.print_new_seq_blacklist != None:
 # region-specific files if desired. Nothing further for base freqs.
 if have_individual_consensus or have_base_freqs:
   if args.split_amplicons:
-    for region, output_file in per_region_output_file_dict.items():
+    for region, output_file in list(per_region_output_file_dict.items()):
       seq_dict_here = unaln_seqs_by_region[region]
-      sorted_seqs_here = sorted(seq_dict_here.items(), key=lambda x:x[0])
+      sorted_seqs_here = sorted(list(seq_dict_here.items()), key=lambda x:x[0])
       SeqIO.write((SeqIO.SeqRecord(Seq.Seq(seq), id=seq_id, description='') \
       for seq_id, seq in sorted_seqs_here), output_file, 'fasta')
   exit(0)
@@ -731,9 +731,9 @@ if have_individual_consensus or have_base_freqs:
 per_patient_seq_counts = \
 collections.Counter(get_beehive_id(seq_id) for seq_id in seq_dict)
 multiply_seqd_patients = set(patient for patient, count in \
-per_patient_seq_counts.items() if count > 1)
+list(per_patient_seq_counts.items()) if count > 1)
 singly_seqd_patients = set(patient for patient, count in \
-per_patient_seq_counts.items() if count == 1)
+list(per_patient_seq_counts.items()) if count == 1)
 seq_ids_for_multiply_seqd_patients = collections.defaultdict(list)
 for seq_id in seq_dict:
   beehive_id = get_beehive_id(seq_id)
@@ -743,18 +743,18 @@ for seq_id in seq_dict:
 
 # Merge multiple seqs per patient.
 for multiply_seqd_patient, seq_ids in \
-seq_ids_for_multiply_seqd_patients.items():
+list(seq_ids_for_multiply_seqd_patients.items()):
   seqs = [seq_dict[seq_id] for seq_id in seq_ids]
   num_seqs = len(seqs)
   seqs_by_length = sorted(seqs, key=lambda seq : alignment_length - \
   seq.count("N") - seq.count("-"), reverse=True)
   best_seq = ""
-  for pos in xrange(alignment_length):
+  for pos in range(alignment_length):
 
     # Try each seq in order from best to worst until one of them has something
     # other than an N:
     best_base = "N"
-    for i in xrange(num_seqs):
+    for i in range(num_seqs):
       base = seqs_by_length[i][pos]
       if base != "N":
         best_base = base
@@ -777,11 +777,11 @@ for seq_id in seq_dict:
   seq_dict[seq_id] = PropagateNoCoverageChar(seq_dict[seq_id])
 
 # Sort seqs by name
-sorted_seqs = sorted(seq_dict.items(), key=lambda x:x[0])
+sorted_seqs = sorted(list(seq_dict.items()), key=lambda x:x[0])
 
 if args.split_amplicons:
 
-  for region, (start, end) in regions_dict.items():
+  for region, (start, end) in list(regions_dict.items()):
     OutSeqs = []
     region_length = end - start + 1
     for seq_id, seq in sorted_seqs:

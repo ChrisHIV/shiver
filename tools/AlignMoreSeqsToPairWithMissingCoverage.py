@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -94,7 +94,7 @@ if len(ConsensusAsString) != len(RefAsString):
   exit(1)
 NewConsensusAsString = ''
 NewRefAsString = ''
-for ConsensusBase, RefBase in itertools.izip(ConsensusAsString, RefAsString):
+for ConsensusBase, RefBase in zip(ConsensusAsString, RefAsString):
   if RefBase == '-' and (ConsensusBase == '-' or ConsensusBase == '?'):
     continue
   else:
