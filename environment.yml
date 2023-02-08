@@ -1,0 +1,18 @@
+name: shiver
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - blast==2.13.0
+  - bowtie2==2.5.0
+  - bwa==0.7.17
+  - mafft==7.515
+  - picard==2.27.4
+  - pip==23.0
+  - samtools==1.16.1
+  - smalt==0.7.6
+  - trimmomatic==0.39
+  - pip:
+   - biopython==1.80
+   - pyfastaq==3.17.0
