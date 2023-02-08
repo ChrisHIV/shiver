@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-from __future__ import print_function
+#!/usr/bin/env python
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251 
@@ -213,7 +213,7 @@ ContigStartsAndEnds = {}
 ContigLengths = {}
 ContigGapFractions = {}
 TotalGapsInContigs = 0
-for ContigName,ContigSeq in ContigDict.items():
+for ContigName,ContigSeq in list(ContigDict.items()):
   StartOfContig, EndOfContig = FindSeqStartAndEnd(ContigName, ContigSeq, \
   AlignmentLength, AlignmentFile)
   ContigStartsAndEnds[ContigName] = [StartOfContig,EndOfContig]
@@ -225,7 +225,7 @@ for ContigName,ContigSeq in ContigDict.items():
   float(NumInternalGaps)/(EndOfContig+1 - StartOfContig)
 
 if args.summarise_contigs_1:
-  for ContigName, length in ContigLengths.items():
+  for ContigName, length in list(ContigLengths.items()):
     sys.stdout.write(str(length) + ' ' + str(ContigGapFractions[ContigName]))
   exit(0)
 
@@ -235,7 +235,7 @@ if args.summarise_contigs_1:
 
 AllContigStarts = []
 AllContigEnds = []
-for [ContigStart,ContigEnd] in ContigStartsAndEnds.values():
+for [ContigStart,ContigEnd] in list(ContigStartsAndEnds.values()):
   AllContigStarts.append(ContigStart)
   AllContigEnds.append(ContigEnd)
 StartOfFirstContig = min(AllContigStarts)
@@ -253,11 +253,11 @@ EndOfLastContig = max(AllContigEnds)
 FlattenedContigsSeq = GapChar * StartOfFirstContig
 for position in range(StartOfFirstContig,EndOfLastContig+1):
   DictOfBasesHere = {}
-  for ContigName,ContigSeq in ContigDict.items():
+  for ContigName,ContigSeq in list(ContigDict.items()):
     DictOfBasesHere[ContigName] = ContigSeq[position]
   BasesHere = set(DictOfBasesHere.values())
   if len(BasesHere) == 1:
-    BaseHere = DictOfBasesHere.values()[0]
+    BaseHere = list(DictOfBasesHere.values())[0]
   else:
     LengthOfLongestDesiredContig = 0
     for ContigName in DictOfBasesHere:
@@ -284,7 +284,7 @@ if args.contigs_length:
 # counting the number of contigs with coverage there. Gaps inside contigs get
 # counted as coverage; gaps between contigs get a count of 0.
 ContigCoverageByPosition = [0 for n in range(0,AlignmentLength)]
-for [start,end] in ContigStartsAndEnds.values():
+for [start,end] in list(ContigStartsAndEnds.values()):
   for position in range(start,end+1):
     ContigCoverageByPosition[position] += 1
 
@@ -306,7 +306,7 @@ if ConsensusName != None:
       if ContigCoverageByPosition[pos] < 2:
         continue
       ContigBases = []
-      for ContigName, ContigSeq in ContigDict.items():
+      for ContigName, ContigSeq in list(ContigDict.items()):
         StartOfContig, EndOfContig = ContigStartsAndEnds[ContigName]
         if StartOfContig <= pos <= EndOfContig:
           ContigBase = ContigSeq[pos]
@@ -338,7 +338,7 @@ if ConsensusName != None:
 
         # Find all bases (or gaps) inside a contig here.
         ContigBases = []
-        for ContigName, ContigSeq in ContigDict.items():
+        for ContigName, ContigSeq in list(ContigDict.items()):
           StartOfContig, EndOfContig = ContigStartsAndEnds[ContigName]
           if StartOfContig <= pos <= EndOfContig:
             ContigBases.append(ContigSeq[pos])
@@ -391,7 +391,7 @@ for position in range(0,AlignmentLength):
     LengthOfDeletions += 1
   if NumContigsHere == 1:
     NoRefHasBaseHere = True
-    for RefName,RefSeq in RefDict.items():
+    for RefName,RefSeq in list(RefDict.items()):
       if RefSeq[position] != GapChar:
         NoRefHasBaseHere = False
         break
@@ -410,7 +410,7 @@ if ExciseUniqueInsertions:
 # contig coverage where the two are in agreement. Record the reference start and
 # end.
 ListOfRefsAndScores = []
-for RefName,RefSeq in RefDict.items():
+for RefName,RefSeq in list(RefDict.items()):
   NumBasesAgreeing = 0
   OverlapLength = 0
   StartOfRef, EndOfRef = FindSeqStartAndEnd(RefName, RefSeq, AlignmentLength,
@@ -445,9 +445,9 @@ if args.print_best_score:
   exit(0)
 
 if args.summarise_contigs_2:
-  ContigsWithBestRef = [RefDict[BestRefName]] + ContigDict.values()
+  ContigsWithBestRef = [RefDict[BestRefName]] + list(ContigDict.values())
   NumSeqs = len(ContigsWithBestRef)
-  for column in xrange(AlignmentLength-1,-1,-1):
+  for column in range(AlignmentLength-1,-1,-1):
     if all(seq[column] == '-' for seq in ContigsWithBestRef):
       for i in range(NumSeqs):
         ContigsWithBestRef[i] = ContigsWithBestRef[i][:column] + \
@@ -498,7 +498,7 @@ for position in range(0,AlignmentLength):
 # Inserting line breaks: thanks Stackoverflow:
 def insert_newlines(string, every=50):
   lines = []
-  for i in xrange(0, len(string), every):
+  for i in range(0, len(string), every):
     lines.append(string[i:i+every])
   return '\n'.join(lines)
 

@@ -15,7 +15,7 @@ MinContigHitFrac=0.9
 # What do you have to type into the command line to make these commands execute?
 # (If the binary file lives in a directory that is not included in your $PATH
 # variable, you will need to include the path here.)
-python2='python2'
+python='python'
 BlastDBcommand='makeblastdb'
 BlastNcommand='blastn'
 smalt='smalt'

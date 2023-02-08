@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -144,7 +144,7 @@ def ProcessRangeOfSeqs(SeqNumbers):
       seq1sub = seq1[start : end + 1]
       seq2sub = seq2[start : end + 1]
 
-      for pos, (gap1, gap2) in enumerate(itertools.izip(seq1sub, seq2sub)):
+      for pos, (gap1, gap2) in enumerate(zip(seq1sub, seq2sub)):
 
         # The first position in the pairwise alignment.
         if not pos:
@@ -203,7 +203,7 @@ def ProcessRangeOfSeqs(SeqNumbers):
   return DelSizeCounts, DelPositionCounts
   
 # Do all the pairwise comparisons!
-DelSizeCounts, DelPositionCounts = ProcessRangeOfSeqs(range(NumSeqs))
+DelSizeCounts, DelPositionCounts = ProcessRangeOfSeqs(list(range(NumSeqs)))
 
 def FillInCounterBlanksAndRescale(counter):
   '''Rescale all values by n(n-1)/2 and supply zero for missing values.'''
@@ -221,7 +221,7 @@ FillInCounterBlanksAndRescale(DelSizeCounts)
 # 1-based. NB the map from aln coords to ref coords is many-to-one.
 if args.reference:
   DelRefPositionCounts = Counter()
-  for DelPosition, DelPositionCount in DelPositionCounts.items():
+  for DelPosition, DelPositionCount in list(DelPositionCounts.items()):
     RefPos = AlnPosToRefPos[DelPosition]
     DelRefPositionCounts[RefPos] += DelPositionCount
   DelPositionCounts = DelRefPositionCounts
@@ -231,20 +231,20 @@ else:
     offset = 1 + args.offset
   else:
     offset = 1 
-  for DelPosition, DelPositionCount in DelPositionCounts.items():
+  for DelPosition, DelPositionCount in list(DelPositionCounts.items()):
     DelPositionCountsNew[DelPosition + offset] = DelPositionCount
   DelPositionCounts = DelPositionCountsNew
 
 # Write output  
 with open(args.OutputFileBasename + '_IndelSizes.csv', 'w') as f:
   f.write('Indel size (bp),Mean number of indels of that size per compared pair of sequences\n')
-  for DelSize, DelSizeCount in DelSizeCounts.items():
+  for DelSize, DelSizeCount in list(DelSizeCounts.items()):
     f.write(str(DelSize) + ',' + str(DelSizeCount) + '\n')
 with open(args.OutputFileBasename + '_IndelPositions.csv', 'w') as f:
   if args.reference:
     f.write('Indel pos in ' + args.reference + ',Count\n')
   else:
     f.write('Indel pos in alignment,Count\n')
-  for DelPosition, DelPositionCount in DelPositionCounts.items():
+  for DelPosition, DelPositionCount in list(DelPositionCounts.items()):
     f.write(str(DelPosition) + ',' + str(DelPositionCount) + '\n')
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -75,7 +75,7 @@ with open(args.alignment_csv, 'r') as f:
     unprocessed_kmer_counts = Counter(unprocessed_kmers)
     kmer_counts = Counter()
     kmer_len_counts = Counter()
-    for unprocessed_kmer, count in unprocessed_kmer_counts.items():
+    for unprocessed_kmer, count in list(unprocessed_kmer_counts.items()):
       kmer = sub("[N-]+", "", unprocessed_kmer)
       len_kmer = len(kmer)
       if len_kmer > 0:

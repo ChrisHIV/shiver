@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -66,7 +66,7 @@ if len(ConsensusAsString) != len(RefAsString):
 # The main bit.
 NewConsensus = ''
 ExpectedBases = ['A', 'C', 'G', 'T', '-']
-for ConsensusBase, RefBase in itertools.izip(ConsensusAsString, RefAsString):
+for ConsensusBase, RefBase in zip(ConsensusAsString, RefAsString):
   if ConsensusBase == '?' or ConsensusBase == 'N':
     NewConsensus += RefBase
   elif ConsensusBase in ExpectedBases:

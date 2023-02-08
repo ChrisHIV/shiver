@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -153,7 +153,7 @@ if args.csv_for_replotting == None:
   y = np.empty(len(CoverageCounts))
   NumbersOfPositionsExceedingCoverages = np.empty(len(CoverageCounts))
   RunningTotalNumberOfPositions = 0
-  for i, (coverage, count) in enumerate(sorted(CoverageCounts.items(),
+  for i, (coverage, count) in enumerate(sorted(list(CoverageCounts.items()),
   key = lambda x : x[0], reverse = True)):
     x[i] = coverage
     y[i] = ScaledTotalIdentitiesByCoverage[coverage] / count

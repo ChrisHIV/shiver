@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-from __future__ import print_function
+#!/usr/bin/env python
+
 #
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -126,7 +126,7 @@ def CallAmbigBaseIfNeeded(bases, coverage):
       except KeyError:
         print('Unexpected set of bases', bases, 'found in', BaseFreqFile, \
         ', not found amonst those for which we have ambiguity codes, namely:', \
-        ' '.join(ReverseIUPACdict2.keys()) + '. Quitting.', file=sys.stderr)
+        ' '.join(list(ReverseIUPACdict2.keys())) + '. Quitting.', file=sys.stderr)
         raise
   if coverage < MinCovForUpper - 0.5:
     return BaseHere.lower()
@@ -142,7 +142,7 @@ def CallEnoughBases(BaseCounts, MinCoverage, coverage):
   # Sort the counts from largest to smallest, and sort the associated bases into
   # a matching order.
   SortedBaseCounts, SortedExpectedBases = \
-  zip(*sorted(zip(BaseCounts, ExpectedBasesNoN), reverse=True))
+  list(zip(*sorted(zip(BaseCounts, ExpectedBasesNoN), reverse=True)))
 
   # Iterate through the counts, from largest to smallest, updating the total
   # so far. We should stop once we reach the desired total, but not if the next
@@ -203,7 +203,7 @@ with open(BaseFreqFile, 'r') as f:
 
     # Convert to ints    
     try:
-      counts = map(int, counts)
+      counts = list(map(int, counts))
     except ValueError:
       print('Could not understand the base counts as ints on line', \
       str(LineNumMin1+1), ',\n', line, 'in', BaseFreqFile + \
@@ -256,7 +256,7 @@ if not args.keep_gaps_by_missing:
 if not args.ref_seq_missing:
   NewConsensus = ''
   NewRefSeq = ''
-  for ConsensusBase, RefBase in itertools.izip(consensus, RefSeq):
+  for ConsensusBase, RefBase in zip(consensus, RefSeq):
     if RefBase == GapChar and (ConsensusBase == '?' or ConsensusBase == \
     GapChar):
       continue

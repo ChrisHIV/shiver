@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -171,7 +171,7 @@ for pos in range(RefLength):
 # position-that-has-that-coverage) by that total number of reads gives the mean
 # identity for that coverage.
 outstring = 'Coverage,Number of positions with that coverage,Mean identity'
-for coverage, count in sorted(CoverageCounts.items(), key=lambda x: x[0]):
+for coverage, count in sorted(list(CoverageCounts.items()), key=lambda x: x[0]):
   TotalNumReads = coverage * count
   MeanIdentity = float(IdentityTotalsByCoverage[coverage]) / TotalNumReads
   outstring += '\n' + str(coverage) + ',' + str(count) + ',' + str(MeanIdentity)

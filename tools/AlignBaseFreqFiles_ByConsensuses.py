@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 ## Author: Chris Wymant, chris.wymant@bdi.ox.ac.uk
 ## Acknowledgement: I wrote this while funded by ERC Advanced Grant PBDR-339251
@@ -153,7 +153,7 @@ def GetFreqs(BaseFreqsFile, consensus):
         continue
       fields = line.split(',')
       try:
-        freqs = map(int, fields[2:])
+        freqs = list(map(int, fields[2:]))
         assert len(freqs) == 6
       except (ValueError, AssertionError):
         print("Unexpected input format of", BaseFreqsFile + ". It appears that",
@@ -268,7 +268,7 @@ NumPosWithHigherCovIn1 = 0
 NumPosWithHigherCovIn2 = 0
 
 # Record each row of the csv file
-for PosMin1, (seq1freqs, seq2freqs) in enumerate(itertools.izip(AllSeq1freqs,
+for PosMin1, (seq1freqs, seq2freqs) in enumerate(zip(AllSeq1freqs,
 AllSeq2freqs)):
   PosInSeq1 = seq1PosConversions[PosMin1]
   PosInSeq2 = seq2PosConversions[PosMin1]
@@ -333,7 +333,7 @@ AllSeq2freqs)):
 # Print output
 if args.compare_snips_with_coverage:
   simple_total_diffs = 0
-  for PosMin1, (base1, base2) in enumerate(itertools.izip(seq1, seq2)):
+  for PosMin1, (base1, base2) in enumerate(zip(seq1, seq2)):
     if base1 != base2 and \
     PosMin1+1 >= args.start_pos_in_aln and \
     PosMin1+1 <= args.end_pos_in_aln and \
